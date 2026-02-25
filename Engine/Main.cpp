@@ -1,6 +1,4 @@
-#include <Windows.h>
-#include <string>
-#include <stdint.h>
+#include "Core/Win32Window.h"
 
 // 콜백 함수.
 // 창 메시지 처리할 때 사용.
@@ -21,47 +19,26 @@ int main()
     std::wstring className = L"Craft Engine Window";
     std::wstring title = L"Craft Engine";
 
-    // 창 크기.
+
+    // 클라이언트 영역(창크기) 구하기.
     uint32_t width = 1280;
     uint32_t height = 800;
 
-    // 창 생성에 필요한 정보(구조체) 채우기.
+ 
     HINSTANCE hInstance = GetModuleHandle(nullptr);
-    WNDCLASS wc = { };
-    wc.lpfnWndProc = WindowProc;
-    wc.hInstance = hInstance;       // 프로그램 포인터.
-    wc.lpszClassName = className.c_str();
 
-    // 클래스 등록.
-    if (!RegisterClass(&wc))
-    {
-        return 0;
-    }
-
-    // 창 객체 생성.
-    HWND hwnd = CreateWindow(
-        className.c_str(),               // Window class
-        title.c_str(),                   // Window text
-        WS_OVERLAPPEDWINDOW,            // Window style
-
-        // 위치 및 크기
-        CW_USEDEFAULT, CW_USEDEFAULT,
+    // 창 생성.
+    Craft::Win32Window window(
         width, height,
-
-        nullptr,       // Parent window    
-        nullptr,       // Menu
-        hInstance,      // Instance handle
-        nullptr        // Additional application data
+        hInstance,
+        WindowProc
     );
 
-    // 창 생성 실패 처리.
-    if (!hwnd)
+    // 초기화 (초기화 실패 시 프로그램 종료).
+    if (!window.Initialize())
     {
-        return 0;
+        return -1;
     }
-
-    // 창 보이기 설정.
-    ShowWindow(hwnd, SW_SHOW);
 
     // 창에서 발생하는 메시지 처리 루프.
     // GetMessage - 동기 방식(Blocking 방식).
