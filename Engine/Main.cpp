@@ -93,6 +93,7 @@ int main()
     return 0;
 }
 
+<<<<<<< Updated upstream
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
@@ -115,3 +116,27 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
+=======
+int main()
+{
+	LaunchEngineStartUp(GetModuleHandle(nullptr));
+}
+
+
+//#ifdef _WIN64
+//int WINAPI WinMain(
+//    _In_ HINSTANCE hInstance,
+//    _In_opt_ HINSTANCE hPrevInstance,
+//    _In_ LPWSTR lpCmdLine,
+//    _In_ int nShowCmd)
+//{
+//    LaunchEngineStartUp(GetModuleHandle(nullptr));
+//    return 0;
+//}
+//#else
+//int main()
+//{
+//	LaunchEngineStartUp(GetModuleHandle(nullptr));
+//}
+//#endif
+>>>>>>> Stashed changes
