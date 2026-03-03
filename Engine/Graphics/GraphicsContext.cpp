@@ -1,11 +1,17 @@
 #include "GraphicsContext.h"
 #include "Core/Win32Window.h"
 #include "Core/Common.h"
+#include <cassert>
 
 namespace Craft
 {
+	// 전역 변수 초기화.
+	GraphicsContext* GraphicsContext::instance = nullptr;
+
 	GraphicsContext::GraphicsContext()
 	{
+		assert(!instance);
+		instance = this;
 	}
 
 	GraphicsContext::~GraphicsContext()
@@ -14,7 +20,7 @@ namespace Craft
 		SafeRelease(device);
 		SafeRelease(context);
 		SafeRelease(swapChain);
-
+		SafeRelease(renderTargetView);
 	}
 
 	void GraphicsContext::Initialize(const Win32Window& window)
@@ -35,9 +41,10 @@ namespace Craft
 		// 렌더 타겟 뷰 생성.
 		CreateRenderTargetView();
 
-		// @Incomplete : 우리 엔진에서는 뷰포트를 바꿀 필요가 없음.
+		// @Incomplete: 우리 엔진에서는 뷰포트를 바꿀 필요가 없음.
 		context->RSSetViewports(1, &viewport);
 	}
+
 	void GraphicsContext::BeginScene(float red, float green, float blue)
 	{
 		// 그릴 이미지 준비.
@@ -52,11 +59,17 @@ namespace Craft
 		float backgroundColor[4] = { red, green, blue, 1.0f };
 		context->ClearRenderTargetView(renderTargetView, backgroundColor);
 	}
+
 	void GraphicsContext::EndScene(uint32_t vsync)
 	{
 		// 모니터에 전달 (백버퍼-프론트버퍼 교환).
 		swapChain->Present(0, 0);
+	}
 
+	GraphicsContext& GraphicsContext::Get()
+	{
+		assert(instance);
+		return *instance;
 	}
 
 	void GraphicsContext::CreateDevice()
@@ -112,6 +125,7 @@ namespace Craft
 			return;
 		}
 	}
+
 	void GraphicsContext::CreateSwapChain(const Win32Window& window)
 	{
 		// 스왑체인 생성해주는 객체 얻어오기.
@@ -176,6 +190,7 @@ namespace Craft
 		// 팩토리 객체 해제.
 		SafeRelease(factory);
 	}
+
 	void GraphicsContext::CreateViewport(const Win32Window& window)
 	{
 		viewport.TopLeftX = 0.0f;
@@ -185,6 +200,7 @@ namespace Craft
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 	}
+
 	void GraphicsContext::CreateRenderTargetView()
 	{
 		// 정석적인 방법.
@@ -214,6 +230,9 @@ namespace Craft
 		// 예외처리.
 		if (FAILED(result))
 		{
+			// 사용한 리소스 해제.
+			SafeRelease(backbuffer);
+
 			__debugbreak();
 			return;
 		}

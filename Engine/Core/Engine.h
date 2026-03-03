@@ -6,7 +6,7 @@
 
 namespace Craft
 {
-	//전방선언
+	// 전방선언.
 	class Win32Window;
 	class GraphicsContext;
 
@@ -26,31 +26,35 @@ namespace Craft
 		Engine();
 		virtual ~Engine();
 
-		//초기화 함수
+		// 초기화 함수.
 		bool Initialize(HINSTANCE instance);
 
-		//엔진 루프 실행 함수
+		// 엔진 루프 실행 함수.
 		void Run();
 
-
 	protected:
-		// Win32 윈도우 메시지 처리 함수
+		// Win32 윈도우 메시지 처리 함수(콜백 함수).
 		static LRESULT CALLBACK Win32MessageProcedure(
-			HWND handle,
-			UINT message,
-			WPARAM wparam,
+			HWND handle, 
+			UINT message, 
+			WPARAM wparam, 
 			LPARAM lparam
 		);
+
 	protected:
-		// 창객체
+		// 창 객체.
 		std::unique_ptr<Win32Window> window;
 
 		// 그래픽스 컨텍스트 객체 (장치 관리 등등).
 		std::unique_ptr<GraphicsContext> graphicsContext;
 
+		// 렌더러 객체(장면 그리기 담당).
+		// 전방선언
+		// 이 방법으로 하면 매번 쓸때마다 앞에 class 써야해서 귀찮음
+		// 맨 위에 따로 넣어주기가 편함.
+		std::unique_ptr<class Renderer> renderer;
+
 		// 엔진 설정 변수.
 		EngineSetting setting;
-
 	};
-
 }
